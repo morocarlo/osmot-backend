@@ -12,7 +12,7 @@ class Project(models.Model):
     end_date = models.DateField(blank=True, null=True)
 
 class Timesheet(models.Model):
-    day = models.CharField(max_length=200)
+    day = models.DateField()
     week = models.IntegerField()
     hour = models.FloatField()
     project = models.ForeignKey(

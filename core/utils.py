@@ -4,6 +4,7 @@ from core.models.timesheet import Project, Timesheet
 from django.conf import settings
 from django.contrib.auth import get_user_model
 
+
 def get_start_and_end_date_from_calendar_week(year, calendar_week):
     try:
         startdate = time.asctime(time.strptime('%d %d 0' % (year, calendar_week-2), '%Y %W %w')) 
@@ -48,3 +49,10 @@ def get_user(request, kwargs):
             user = User.objects.get(pk=user_id)
 
     return user
+
+def get_accesible_projects(user, start_date, end_date):
+    if user.is_superuser or user.is_staff:
+        projects = Project.objects.filter(start_date__lte=end_date, end_date__gte=start_date).distinct()
+    else:
+        projects = Project.objects.filter(start_date__lte=end_date, end_date__gte=start_date, users__in=[user]).distinct()
+    return projects

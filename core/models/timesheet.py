@@ -10,6 +10,9 @@ class Project(models.Model):
     description =  models.TextField(blank=True, null=True)
     start_date = models.DateField(blank=True, null=True)
     end_date = models.DateField(blank=True, null=True)
+    users = models.ManyToManyField(
+        settings.AUTH_USER_MODEL,
+    )
 
     def __str__(self):
         return "{}_{}".format(self.code, self.name)

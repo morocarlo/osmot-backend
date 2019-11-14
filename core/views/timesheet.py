@@ -4,7 +4,7 @@ from rest_framework.permissions import IsAuthenticated
 import calendar, datetime, holidays, time
 from datetime import timedelta
 from core.models.timesheet import Project, Timesheet
-from core.utils import get_start_and_end_date_from_calendar_week, get_start_and_end_date_from_month, add_months, get_user
+from core.utils import get_start_and_end_date_from_calendar_week, get_start_and_end_date_from_month, add_months, get_user, get_accesible_projects
 from django.conf import settings 
 from django.db.models import Sum
 from django.contrib.auth import get_user_model
@@ -116,7 +116,7 @@ class GetWeekDataView(APIView):
                     "hours": hours
                 },)
         else:
-            for prj in Project.objects.all():
+            for prj in get_accesible_projects(user, all_days[0], all_days[-1]):
                 hours = []
                 for day in all_days:
                     ts = Timesheet.objects.filter(project=prj, day=day, user=user).first()
@@ -200,7 +200,7 @@ class GetMonthDataView(APIView):
                 },)
         else:
 
-            for prj in Project.objects.all():
+            for prj in get_accesible_projects(user, all_days[0], all_days[-1]):
                 hours = []
                 for day in all_days:
                     ts = Timesheet.objects.filter(project=prj, day=day, user=user).first()

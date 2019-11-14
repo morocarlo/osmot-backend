@@ -1,2 +1,6 @@
+# Dependencies:
+Django >= 2.2
+Python >= 3.7
 
-#https://simpleisbetterthancomplex.com/tutorial/2018/11/22/how-to-implement-token-authentication-using-django-rest-framework.html
+# Running
+./run-make.sh run

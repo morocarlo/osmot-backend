@@ -6,6 +6,9 @@ from datetime import timedelta
 from core.models.timesheet import Project, Timesheet
 from core.utils import get_start_and_end_date_from_calendar_week, get_start_and_end_date_from_month, add_months
 from django.conf import settings 
+from django.db.models import Sum
+from django.contrib.auth import get_user_model
+    
 
 WEEKEND_DAYS = [5,6]
 
@@ -90,22 +93,44 @@ class GetWeekDataView(APIView):
 
         # Print all the holidays in UnitedKingdom in year 2018 
         content = []
-        for prj in Project.objects.all():
-            hours = []
-            for day in all_days:
-                ts = Timesheet.objects.filter(project=prj, day=day, user=user).first()
-                if ts:
-                    hours.append(ts.hour)
-                else:
-                    hours.append(0)
 
-            
-            content.append({
-                "name": prj.name,
-                "_id": prj.pk,
-                "week": week,
-                "hours": hours
-            },)
+        is_user_request = kwargs.get('users', None)
+        if is_user_request:
+            User = get_user_model()
+            for user in User.objects.all():
+                hours = []
+                for day in all_days:
+                    ts = Timesheet.objects.filter( day=day, user=user).aggregate(Sum('hour'))
+                    print ('ts', ts)
+                    if ts and 'hour__sum' in ts:
+                        hours.append(ts['hour__sum'])
+                    else:
+                        hours.append(0)
+
+                
+                content.append({
+                    "name": user.username,
+                    "_id": user.pk,
+                    "week": week,
+                    "hours": hours
+                },)
+        else:
+            for prj in Project.objects.all():
+                hours = []
+                for day in all_days:
+                    ts = Timesheet.objects.filter(project=prj, day=day, user=user).first()
+                    if ts:
+                        hours.append(ts.hour)
+                    else:
+                        hours.append(0)
+
+                
+                content.append({
+                    "name": prj.name,
+                    "_id": prj.pk,
+                    "week": week,
+                    "hours": hours
+                },)
 
         return Response(content)
         
@@ -158,20 +183,40 @@ class GetMonthDataView(APIView):
 
         # Print all the holidays in UnitedKingdom in year 2018 
         content = []
-        for prj in Project.objects.all():
-            hours = []
-            for day in all_days:
-                ts = Timesheet.objects.filter(project=prj, day=day, user=user).first()
-                if ts:
-                    hours.append(ts.hour)
-                else:
-                    hours.append(0)
-            
-            content.append({
-                "name": prj.name,
-                "_id": prj.pk,
-                "hours": hours
-            },)
+        is_user_request = kwargs.get('users', None)
+        if is_user_request:
+            User = get_user_model()
+            for user in User.objects.all():
+                hours = []
+                for day in all_days:
+                    ts = Timesheet.objects.filter( day=day, user=user).aggregate(Sum('hour'))
+                    print ('ts', ts)
+                    if ts and 'hour__sum' in ts:
+                        hours.append(ts['hour__sum'])
+                    else:
+                        hours.append(0)
+                
+                content.append({
+                    "name": user.username,
+                    "_id": user.pk,
+                    "hours": hours
+                },)
+        else:
+
+            for prj in Project.objects.all():
+                hours = []
+                for day in all_days:
+                    ts = Timesheet.objects.filter(project=prj, day=day, user=user).first()
+                    if ts:
+                        hours.append(ts.hour)
+                    else:
+                        hours.append(0)
+                
+                content.append({
+                    "name": prj.name,
+                    "_id": prj.pk,
+                    "hours": hours
+                },)
 
         return Response(content)
         

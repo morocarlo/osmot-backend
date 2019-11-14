@@ -19,10 +19,5 @@ class Migration(migrations.Migration):
             model_name='timesheet',
             name='hour',
             field=models.FloatField(blank=True, null=True),
-        ),
-        migrations.AlterField(
-            model_name='timesheet',
-            name='week',
-            field=models.IntegerField(blank=True, null=True),
-        ),
+        )
     ]

@@ -16,21 +16,27 @@ class SaveTimesheetView(APIView):
     def post(self, request, *args, **kwargs):
 
         data = request.data
-        user=request.user
-
-        #{"data":[{"name":"TEST","_id":1,"week":45,"hours":[2,0,0,0,0,0,0]}]}
-        now = datetime.datetime.now()
-        year = now.year
+        user = request.user
 
         for item in data['data']:
             index = 0
-            all_days = get_start_and_end_date_from_calendar_week(year, item['week'])
+            if 'week' in item:
+                week = item['week']
+                week_delta = int(kwargs.get('week_delta', 0))
+                week += week_delta
+                all_days = get_start_and_end_date_from_calendar_week(year, week )
+            else: # month view!
+                now = datetime.datetime.now()
+                month_delta = int(kwargs.get('month_delta', 0))
+                now = add_months(now, month_delta)
+                year = now.year
+                month = now.month
+                all_days = get_start_and_end_date_from_month(year, month)
 
             for hour in item['hours']:
                 day = all_days[index]
                 t, created = Timesheet.objects.get_or_create(
                     user=user,
-                    week=item['week'],
                     project_id=item['_id'],
                     day=day,
                 )

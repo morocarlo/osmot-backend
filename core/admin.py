@@ -15,8 +15,8 @@ class ProjectAdmin(admin.ModelAdmin):
 
 @admin.register(Timesheet)
 class TimesheettAdmin(admin.ModelAdmin):
-    list_filter = ('user', 'project', 'day', 'week')
-    list_display = ('user', 'project', 'day', 'week', 'hour' )
+    list_filter = ('user', 'project', 'day',)
+    list_display = ('user', 'project', 'day', 'hour' )
     search_fields = (
         'project__name',
         'project__code'

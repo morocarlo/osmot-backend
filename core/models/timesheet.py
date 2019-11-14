@@ -17,7 +17,6 @@ class Project(models.Model):
 
 class Timesheet(models.Model):
     day = models.DateField(blank=True, null=True)
-    week = models.IntegerField(blank=True, null=True)
     hour = models.FloatField(blank=True, null=True)
     project = models.ForeignKey(
         Project,

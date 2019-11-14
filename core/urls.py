@@ -14,4 +14,6 @@ urlpatterns = [
     path('save_timesheet_month/<slug:month_delta>/', timesheet.SaveTimesheetView.as_view(), name='save_timesheet_month'),
 
     path('login/', auth.login, name='login'),
+    path('all_users/', auth.GetAllUsers.as_view(), name='all_users'),
+    
 ]

@@ -1,6 +1,8 @@
 import calendar, datetime, holidays, time
 from datetime import timedelta
 from core.models.timesheet import Project, Timesheet
+from django.conf import settings
+from django.contrib.auth import get_user_model
 
 def get_start_and_end_date_from_calendar_week(year, calendar_week):
     try:
@@ -32,3 +34,17 @@ def add_months(sourcedate, months):
     month = month % 12 + 1
     day = min(sourcedate.day, calendar.monthrange(year,month)[1])
     return datetime.date(year, month, day)
+
+def get_user(request, kwargs):
+    user = request.user
+    if request.user.is_superuser or request.user.is_staff:
+        user_id = kwargs.get('user_id', None)
+        if not user_id:
+            user_id = request.GET.get('user_id', None)
+        if not user_id:
+            user_id = request.META.get('user_id', None)
+        if user_id:
+            User = get_user_model()
+            user = User.objects.get(pk=user_id)
+
+    return user

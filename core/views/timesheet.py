@@ -4,7 +4,7 @@ from rest_framework.permissions import IsAuthenticated
 import calendar, datetime, holidays, time
 from datetime import timedelta
 from core.models.timesheet import Project, Timesheet
-from core.utils import get_start_and_end_date_from_calendar_week, get_start_and_end_date_from_month, add_months
+from core.utils import get_start_and_end_date_from_calendar_week, get_start_and_end_date_from_month, add_months, get_user
 from django.conf import settings 
 from django.db.models import Sum
 from django.contrib.auth import get_user_model
@@ -19,7 +19,7 @@ class SaveTimesheetView(APIView):
     def post(self, request, *args, **kwargs):
 
         data = request.data
-        user = request.user
+        user = get_user(request, kwargs)
 
         for item in data['data']:
             index = 0
@@ -85,7 +85,7 @@ class GetWeekDataView(APIView):
         now = datetime.datetime.now()
         year = now.year
         week = now.isocalendar()[1]
-        user = request.user
+        user = get_user(request, kwargs)
 
         week_delta = int(kwargs.get('week_delta', 0))
         week += week_delta
@@ -167,11 +167,7 @@ class GetMonthDataView(APIView):
 
     def get(self, request, *args, **kwargs):
         now = datetime.datetime.now()
-        user = request.user
-        if request.user.is_superuser or request.user.is_staff:
-            username = kwargs.get('username', None)
-            if username:
-                user = settings.AUTH_USER_MODEL.objects.get(username=username)
+        user = get_user(request, kwargs)
 
         month_delta = int(kwargs.get('month_delta', 0))
         now = add_months(now, month_delta)

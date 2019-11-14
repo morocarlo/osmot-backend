@@ -44,14 +44,16 @@ class SaveTimesheetView(APIView):
 
             for hour in item['hours']:
                 day = all_days[index]
-                t = Timesheet.objects.get_or_create(
+                t, created = Timesheet.objects.get_or_create(
                     user=user,
                     week=item['week'],
                     project_id=item['_id'],
-                    hour=hour,
                     day=day,
                 )
                 index += 1
+                t.hour=hour
+                t.save()
+
 
         return Response({'message': 'saved'})
 

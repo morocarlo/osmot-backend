@@ -12,9 +12,9 @@ class Project(models.Model):
     end_date = models.DateField(blank=True, null=True)
 
 class Timesheet(models.Model):
-    day = models.DateField()
-    week = models.IntegerField()
-    hour = models.FloatField()
+    day = models.DateField(blank=True, null=True)
+    week = models.IntegerField(blank=True, null=True)
+    hour = models.FloatField(blank=True, null=True)
     project = models.ForeignKey(
         Project,
         on_delete=models.SET_NULL,

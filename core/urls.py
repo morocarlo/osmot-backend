@@ -1,15 +1,14 @@
 from django.urls import path
-from core import views
-
+from core.views import timesheet, auth
 
 urlpatterns = [
-    path('get_week/', views.GetWeekView.as_view(), name='get_week'),
-    path('get_week_data/', views.GetWeekDataView.as_view(), name='get_week_data'),
+    path('get_week/<slug:week_delta>/', timesheet.GetWeekView.as_view(), name='get_week'),
+    path('get_week_data/<slug:week_delta>/', timesheet.GetWeekDataView.as_view(), name='get_week_data'),
 
-    path('save_timesheet/', views.SaveTimesheetView.as_view(), name='save_timesheet'),
+    path('save_timesheet/', timesheet.SaveTimesheetView.as_view(), name='save_timesheet'),
 
-    path('get_week/<slug:week_delta>/', views.GetWeekView.as_view(), name='get_week'),
-    path('get_week_data/<slug:week_delta>/', views.GetWeekDataView.as_view(), name='get_week_data'),
+    path('get_month/<slug:month_delta>/', timesheet.GetMonthView.as_view(), name='get_month'),
+    path('get_month_data/<slug:month_delta>/', timesheet.GetMonthDataView.as_view(), name='get_month_data'),
 
-    path('login/', views.login, name='login'),
+    path('login/', auth.login, name='login'),
 ]

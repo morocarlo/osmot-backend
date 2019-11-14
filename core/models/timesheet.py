@@ -11,6 +11,10 @@ class Project(models.Model):
     start_date = models.DateField(blank=True, null=True)
     end_date = models.DateField(blank=True, null=True)
 
+    def __str__(self):
+        return "{}_{}".format(self.code, self.name)
+          
+
 class Timesheet(models.Model):
     day = models.DateField(blank=True, null=True)
     week = models.IntegerField(blank=True, null=True)
@@ -25,3 +29,6 @@ class Timesheet(models.Model):
         on_delete=models.SET_NULL,
         blank=True, null=True
     )
+
+    def __str__(self):
+        return "{} at {} : {}".format(self.user, self.day, self.project)

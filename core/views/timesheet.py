@@ -23,13 +23,14 @@ class SaveTimesheetView(APIView):
 
         for item in data['data']:
             index = 0
+            now = datetime.datetime.now()
             if 'week' in item:
                 week = item['week']
                 week_delta = int(kwargs.get('week_delta', 0))
                 week += week_delta
+                year = now.year
                 all_days = get_start_and_end_date_from_calendar_week(year, week )
             else: # month view!
-                now = datetime.datetime.now()
                 month_delta = int(kwargs.get('month_delta', 0))
                 now = add_months(now, month_delta)
                 year = now.year
